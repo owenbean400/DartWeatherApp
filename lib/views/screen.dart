@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather/views/top_bar.dart';
 import '../models/weather_api.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'dart:developer' as developer;
@@ -7,6 +8,8 @@ import 'data_graph.dart';
 
 const white = Color.fromARGB(255, 255, 255, 255);
 const borderColor = Color.fromARGB(50, 255, 225, 255);
+const String errorMsg =
+    "Sorry, could not retrieve weather data from your phone.";
 
 class Main extends StatelessWidget {
   final int index;
@@ -64,9 +67,18 @@ class _WeatherMain extends State<WeatherMain> {
             ],
           );
         } else if (snapshot.hasError) {
-          return const Text('Error loading weather');
+          return const Expanded(
+              child: Center(
+                  child: Text(errorMsg, style: TextStyle(color: whiteColor))));
         }
-        return const Expanded(child: CircularProgressIndicator());
+        return const Expanded(
+            child: Center(
+                child: SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: CircularProgressIndicator(
+                      color: whiteColor,
+                    ))));
       },
     );
   }
@@ -180,12 +192,26 @@ class _WeatherFutureListWeeklyState extends State<WeatherFutureListWeekly> {
                   ], animate: false))
             ])));
           } else if (snapshot.hasError) {
-            return const Text('Error loading weather');
+            return const SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Expanded(
+                    child: Center(
+                        child: Text(
+                  errorMsg,
+                  style: TextStyle(color: white),
+                ))));
           }
           return const SizedBox(
               height: 200,
               width: double.infinity,
-              child: Expanded(child: CircularProgressIndicator()));
+              child: Expanded(
+                  child: Center(
+                      child: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child:
+                              CircularProgressIndicator(color: whiteColor)))));
         },
       ),
     );
@@ -298,12 +324,26 @@ class _WeatherFutureListHourlyState extends State<WeatherFutureListHourly> {
               itemCount: items.length,
             )));
           } else if (snapshot.hasError) {
-            return const Text('Error loading weather');
+            return const SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Expanded(
+                    child: Center(
+                        child: Text(
+                  errorMsg,
+                  style: TextStyle(color: white),
+                ))));
           }
           return const SizedBox(
               height: 200,
               width: double.infinity,
-              child: Expanded(child: CircularProgressIndicator()));
+              child: Expanded(
+                  child: Center(
+                      child: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child:
+                              CircularProgressIndicator(color: whiteColor)))));
         },
       ),
     );
