@@ -1,3 +1,6 @@
+// ignore: file_names
+// ignore_for_file: unnecessary_this
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer';
@@ -49,6 +52,29 @@ Future<WeatherFuture> fetchWeatherFutureAll() async {
   }
 }
 
+Future<WeatherFuture> fetchWeatherFutureHourly() async {
+  Position position = await determinePosition();
+
+  final response = await http.get(Uri.parse(
+      'https://api.weather.gov/points/${position.latitude},${position.longitude}'));
+
+  log("${position.latitude} : ${position.longitude}");
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    WeatherSite site = WeatherSite.fromJson(jsonDecode(response.body));
+
+    WeatherFuture temp = await fetchWeatherFuture(site.siteHour, site.location);
+
+    return temp;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load WeatherSite');
+  }
+}
+
 Future<WeatherTemp> fetchWeatherTemperature(
     String uri, Location location) async {
   final response = await http.get(Uri.parse(uri));
@@ -74,7 +100,7 @@ Future<WeatherFuture> fetchWeatherFuture(String uri, Location location) async {
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    developer.log("${uri}");
+    developer.log(uri);
     throw Exception('Failed to load WeatherSite');
   }
 }
@@ -113,6 +139,7 @@ class WeatherTemp {
   final String forecast;
   final bool isDay;
   final Location location;
+  final String time;
 
   const WeatherTemp(
       {required this.temperature,
@@ -120,7 +147,8 @@ class WeatherTemp {
       required this.name,
       required this.forecast,
       required this.isDay,
-      required this.location});
+      required this.location,
+      required this.time});
 
   String getTemperature() {
     return "${this.temperature} ${this.temperatureSign}";
@@ -139,6 +167,7 @@ class WeatherTemp {
         name: periods[0]['name'] as String,
         forecast: periods[0]['shortForecast'] as String,
         isDay: periods[0]['isDaytime'] as bool,
+        time: periods[0]['startTime'] as String,
         location: loc);
   }
 }
@@ -160,6 +189,7 @@ class WeatherFuture {
           name: element['name'] as String,
           forecast: element['shortForecast'],
           isDay: element['isDaytime'] as bool,
+          time: element['startTime'] as String,
           location: loc));
     }
 

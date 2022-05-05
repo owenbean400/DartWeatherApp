@@ -1,22 +1,28 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import '../models/weatherAPI.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
+import '../models/weather_api.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'dart:math';
 import 'dart:developer' as developer;
 
-import 'DataGraph.dart';
+import 'data_graph.dart';
 
 const white = Color.fromARGB(255, 255, 255, 255);
 const borderColor = Color.fromARGB(50, 255, 225, 255);
 
 class Main extends StatelessWidget {
+  final int index;
+
+  const Main(this.index, {Key? key}) : super(key: key);
+
+  static const List<Widget> _widgetOtions = <Widget>[
+    WeatherFutureListWeekly(),
+    WeatherFutureListHourly()
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    return Column(children: const [
-      SizedBox(height: 200, child: WeatherMain()),
-      Expanded(flex: 1, child: WeatherFutureList()),
+    return Column(children: [
+      const SizedBox(height: 200, child: WeatherMain()),
+      Expanded(flex: 1, child: _widgetOtions.elementAt(index)),
     ]);
   }
 }
@@ -32,8 +38,8 @@ class _WeatherMain extends State<WeatherMain> {
   late Future<WeatherTemp> futureWeather;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     futureWeather = fetchWeather();
   }
 
@@ -66,14 +72,15 @@ class _WeatherMain extends State<WeatherMain> {
   }
 }
 
-class WeatherFutureList extends StatefulWidget {
-  const WeatherFutureList({Key? key}) : super(key: key);
+class WeatherFutureListWeekly extends StatefulWidget {
+  const WeatherFutureListWeekly({Key? key}) : super(key: key);
 
   @override
-  State<WeatherFutureList> createState() => _WeatherFutureListState();
+  State<WeatherFutureListWeekly> createState() =>
+      _WeatherFutureListWeeklyState();
 }
 
-class _WeatherFutureListState extends State<WeatherFutureList> {
+class _WeatherFutureListWeeklyState extends State<WeatherFutureListWeekly> {
   late Future<WeatherFuture> futureWeatherfuture;
 
   @override
@@ -107,7 +114,7 @@ class _WeatherFutureListState extends State<WeatherFutureList> {
             developer.log(now.toString());
 
             for (var i = 0; i < snapshot.data!.weathers.length; i++) {
-              developer.log("${now}");
+              developer.log("$now");
               weatherGraphHigh.add(WeatherPoint(
                   now, int.parse(snapshot.data!.weathers[i].temperature)));
               now = now.add(const Duration(hours: 12));
@@ -131,22 +138,22 @@ class _WeatherFutureListState extends State<WeatherFutureList> {
                       child: ListTile(
                           title: Row(children: [
                         SizedBox(
-                            width: 150,
+                            width: 110,
                             child: Text(items[index].name,
                                 style: const TextStyle(
-                                    fontSize: 16, color: white))),
+                                    fontSize: 12, color: white))),
                         Expanded(
                             child: Text(items[index].forecast,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                    fontSize: 16, color: white))),
+                                    fontSize: 12, color: white))),
                         SizedBox(
-                            width: 50,
+                            width: 40,
                             child: Text(
                                 "${items[index].temperature} ${items[index].temperatureSign}",
                                 textAlign: TextAlign.right,
                                 style: const TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     color: white)))
                       ])));
@@ -172,6 +179,124 @@ class _WeatherFutureListState extends State<WeatherFutureList> {
                             weatherPoint.temp),
                   ], animate: false))
             ])));
+          } else if (snapshot.hasError) {
+            return const Text('Error loading weather');
+          }
+          return const SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: Expanded(child: CircularProgressIndicator()));
+        },
+      ),
+    );
+  }
+}
+
+class WeatherFutureListHourly extends StatefulWidget {
+  const WeatherFutureListHourly({Key? key}) : super(key: key);
+
+  @override
+  State<WeatherFutureListHourly> createState() =>
+      _WeatherFutureListHourlyState();
+}
+
+class _WeatherFutureListHourlyState extends State<WeatherFutureListHourly> {
+  late Future<WeatherFuture> futureWeatherfuture;
+
+  @override
+  void initState() {
+    super.initState();
+    futureWeatherfuture = fetchWeatherFutureHourly();
+  }
+
+  String _hourlyText(String dt) {
+    var now = DateTime.parse(dt).toLocal();
+
+    String day = "";
+    String timeOfDay = (now.hour < 12) ? "AM" : "PM";
+    int hour = (now.hour < 12) ? now.hour + 1 : now.hour - 11;
+
+    switch (now.weekday) {
+      case 1:
+        day = "Mon";
+        break;
+      case 2:
+        day = "Tues";
+        break;
+      case 3:
+        day = "Wed";
+        break;
+      case 4:
+        day = "Thur";
+        break;
+      case 5:
+        day = "Fri";
+        break;
+      case 6:
+        day = "Sat";
+        break;
+      case 7:
+        day = "Sun";
+        break;
+    }
+    developer.log(
+        "str: $dt hr: $hour, realHr: ${now.hour}, Week ${now.weekday}, realWeek: $day");
+
+    return "${(hour) < 10 ? "  " : ""}$hour:00 $timeOfDay $day";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+            top: BorderSide(
+          color: borderColor,
+        )),
+      ),
+      child: FutureBuilder<WeatherFuture>(
+        future: futureWeatherfuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var items = snapshot.data!.weathers;
+            return Expanded(
+                child: SingleChildScrollView(
+                    child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                        color: borderColor,
+                      )),
+                    ),
+                    child: ListTile(
+                        title: Row(children: [
+                      SizedBox(
+                          width: 90,
+                          child: Text(_hourlyText(items[index].time),
+                              style:
+                                  const TextStyle(fontSize: 12, color: white))),
+                      Expanded(
+                          child: Text(items[index].forecast,
+                              overflow: TextOverflow.ellipsis,
+                              style:
+                                  const TextStyle(fontSize: 12, color: white))),
+                      SizedBox(
+                          width: 40,
+                          child: Text(
+                              "${items[index].temperature} ${items[index].temperatureSign}",
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: white)))
+                    ])));
+              },
+              itemCount: items.length,
+            )));
           } else if (snapshot.hasError) {
             return const Text('Error loading weather');
           }

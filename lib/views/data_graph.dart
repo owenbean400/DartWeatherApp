@@ -1,6 +1,7 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class EndPointGraph extends StatelessWidget {
   List<charts.Series<dynamic, DateTime>> seriesList;
   final bool animate;

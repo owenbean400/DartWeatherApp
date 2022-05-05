@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
-import './models/weatherAPI.dart';
-import './views/TopBar.dart';
-import './views/Main.dart';
+import 'views/top_bar.dart';
+import 'views/screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(600, 450);
@@ -31,28 +29,72 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: Scaffold(
               body: WindowBorder(
-                  color: backgroundStartColor, width: 1, child: MainScreen())));
+                  color: backgroundStartColor,
+                  width: 1,
+                  child: const MainScreen())));
     } else {
-      return MaterialApp(
-          title: "Weather App",
-          home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Owen Weather App'),
-              ),
-              body: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [backgroundStartColor, backgroundEndColor],
-                        stops: [0.0, 1.0]),
-                  ),
-                  child: Main())));
+      return const MaterialApp(title: "Weather App", home: PhoneMain());
     }
   }
 }
 
+class PhoneMain extends StatefulWidget {
+  const PhoneMain({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _PhoneMain();
+}
+
+class _PhoneMain extends State<PhoneMain> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Owen Weather App'),
+      ),
+      body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [backgroundStartColor, backgroundEndColor],
+                stops: [0.0, 1.0]),
+          ),
+          child: Main(_selectedIndex)),
+      bottomNavigationBar: Container(
+          decoration: const BoxDecoration(boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: shadowColor, blurRadius: 8.0, offset: Offset(0.0, 0.25))
+          ]),
+          child: BottomNavigationBar(
+            elevation: 20.0,
+            backgroundColor: backgroundEndColor,
+            selectedItemColor: whiteColor,
+            unselectedItemColor: darkWhiteColor,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.apps_rounded), label: "Daily"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.access_time_filled_rounded), label: "Hourly")
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          )),
+    );
+  }
+}
+
 class MainScreen extends StatelessWidget {
+  const MainScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -68,9 +110,9 @@ class MainScreen extends StatelessWidget {
               WindowTitleBarBox(
                   child: Row(children: [
                 Expanded(child: MoveWindow()),
-                WindowButtons()
+                const WindowButtons()
               ])),
-              Expanded(child: Main())
+              const Expanded(child: Main(1))
             ])));
   }
 }

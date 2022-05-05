@@ -4,6 +4,10 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 const borderColor = Color.fromARGB(100, 0, 170, 237);
 const backgroundStartColor = Color.fromARGB(255, 0, 170, 237);
 const backgroundEndColor = Color.fromARGB(255, 0, 145, 202);
+const whiteColor = Color.fromARGB(255, 255, 255, 255);
+const darkWhiteColor = Color.fromARGB(100, 255, 255, 255);
+const blackColor = Color.fromARGB(255, 0, 0, 0);
+const shadowColor = Color.fromARGB(30, 0, 0, 0);
 
 final buttonColors = WindowButtonColors(
     iconNormal: const Color.fromARGB(255, 0, 0, 200),
@@ -19,6 +23,8 @@ final closeButtonColors = WindowButtonColors(
     iconMouseOver: Colors.white);
 
 class WindowButtons extends StatelessWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
