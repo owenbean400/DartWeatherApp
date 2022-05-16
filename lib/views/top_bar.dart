@@ -8,6 +8,27 @@ const whiteColor = Color.fromARGB(255, 255, 255, 255);
 const darkWhiteColor = Color.fromARGB(100, 255, 255, 255);
 const blackColor = Color.fromARGB(255, 0, 0, 0);
 const shadowColor = Color.fromARGB(30, 0, 0, 0);
+const yellowColor = Color.fromARGB(255, 255, 255, 0);
+const sunnyColor = Color.fromARGB(255, 255, 255, 0);
+const fogColor = Color.fromARGB(255, 210, 210, 210);
+const cloudColor = Color.fromARGB(255, 100, 100, 100);
+const rainColor = Color.fromARGB(255, 55, 33, 255);
+const clearColor = rainColor;
+
+Map<String, ColorTile> weatherColorMap = {
+  "sun": const ColorTile(Color.fromARGB(255, 255, 255, 0), blackColor),
+  "clear": const ColorTile(backgroundStartColor, whiteColor),
+  "fog": const ColorTile(Color.fromARGB(255, 210, 210, 210), blackColor),
+  "cloud": const ColorTile(Color.fromARGB(255, 180, 180, 180), whiteColor),
+  "thund": const ColorTile(Color.fromARGB(255, 12, 0, 120), whiteColor),
+  "rain": const ColorTile(Color.fromARGB(255, 55, 33, 255), whiteColor),
+  "snow": const ColorTile(whiteColor, blackColor)
+};
+
+Map<String, double> weatherColorMapAlpha = {
+  "part": 0.9,
+  "most": 0.95,
+};
 
 final buttonColors = WindowButtonColors(
     iconNormal: const Color.fromARGB(255, 0, 0, 200),
@@ -35,4 +56,11 @@ class WindowButtons extends StatelessWidget {
       ],
     );
   }
+}
+
+class ColorTile {
+  final Color bgColor;
+  final Color textColor;
+
+  const ColorTile(this.bgColor, this.textColor);
 }

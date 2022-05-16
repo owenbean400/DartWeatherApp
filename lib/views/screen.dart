@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather/views/top_bar.dart';
 import '../models/weather_api.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'dart:developer' as developer;
-
-import 'data_graph.dart';
 
 const white = Color.fromARGB(255, 255, 255, 255);
 const borderColor = Color.fromARGB(50, 255, 225, 255);
@@ -114,24 +111,6 @@ class _WeatherFutureListWeeklyState extends State<WeatherFutureListWeekly> {
         future: futureWeatherfuture,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<WeatherPoint> weatherGraphHigh = [];
-            DateTime now = DateTime.utc(
-                DateTime.now().year, DateTime.now().month, DateTime.now().day);
-            now = now.add(const Duration(hours: 4));
-
-            if (snapshot.data!.weathers[0].isDay) {
-              now = now.add(const Duration(hours: 12));
-            }
-
-            developer.log(now.toString());
-
-            for (var i = 0; i < snapshot.data!.weathers.length; i++) {
-              developer.log("$now");
-              weatherGraphHigh.add(WeatherPoint(
-                  now, int.parse(snapshot.data!.weathers[i].temperature)));
-              now = now.add(const Duration(hours: 12));
-            }
-
             var items = snapshot.data!.weathers;
             return Expanded(
                 child: SingleChildScrollView(
@@ -140,9 +119,13 @@ class _WeatherFutureListWeeklyState extends State<WeatherFutureListWeekly> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
+                  ColorTile tileColor =
+                      backgroundFromWeather(items[index].forecast);
+
                   return Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
+                      decoration: BoxDecoration(
+                        color: tileColor.bgColor,
+                        border: const Border(
                             bottom: BorderSide(
                           color: borderColor,
                         )),
@@ -150,46 +133,28 @@ class _WeatherFutureListWeeklyState extends State<WeatherFutureListWeekly> {
                       child: ListTile(
                           title: Row(children: [
                         SizedBox(
-                            width: 110,
+                            width: 130,
                             child: Text(items[index].name,
-                                style: const TextStyle(
-                                    fontSize: 12, color: white))),
+                                style: TextStyle(
+                                    fontSize: 12, color: tileColor.textColor))),
                         Expanded(
                             child: Text(items[index].forecast,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontSize: 12, color: white))),
+                                style: TextStyle(
+                                    fontSize: 12, color: tileColor.textColor))),
                         SizedBox(
                             width: 40,
                             child: Text(
                                 "${items[index].temperature} ${items[index].temperatureSign}",
                                 textAlign: TextAlign.right,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: white)))
+                                    color: tileColor.textColor)))
                       ])));
                 },
                 itemCount: items.length,
-              ),
-              Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 20),
-                  height: 200,
-                  child: EndPointGraph([
-                    charts.Series(
-                        id: "Weather Graph",
-                        colorFn: (_, __) =>
-                            charts.Color.fromHex(code: "#f5f9ff"),
-                        areaColorFn: (_, __) =>
-                            charts.Color.fromHex(code: "#d4e7ff"),
-                        strokeWidthPxFn: (dynamic weatherPoint, _) => 6,
-                        radiusPxFn: (dynamic weatherPoint, _) => 2,
-                        data: weatherGraphHigh,
-                        domainFn: (dynamic weatherPoint, _) =>
-                            weatherPoint.time,
-                        measureFn: (dynamic weatherPoint, _) =>
-                            weatherPoint.temp),
-                  ], animate: false))
+              )
             ])));
           } else if (snapshot.hasError) {
             return const SizedBox(
@@ -291,9 +256,13 @@ class _WeatherFutureListHourlyState extends State<WeatherFutureListHourly> {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                ColorTile tileColor =
+                    backgroundFromWeather(items[index].forecast);
+
                 return Container(
-                    decoration: const BoxDecoration(
-                      border: Border(
+                    decoration: BoxDecoration(
+                      color: tileColor.bgColor,
+                      border: const Border(
                           bottom: BorderSide(
                         color: borderColor,
                       )),
@@ -301,24 +270,24 @@ class _WeatherFutureListHourlyState extends State<WeatherFutureListHourly> {
                     child: ListTile(
                         title: Row(children: [
                       SizedBox(
-                          width: 90,
+                          width: 110,
                           child: Text(_hourlyText(items[index].time),
-                              style:
-                                  const TextStyle(fontSize: 12, color: white))),
+                              style: TextStyle(
+                                  fontSize: 12, color: tileColor.textColor))),
                       Expanded(
                           child: Text(items[index].forecast,
                               overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontSize: 12, color: white))),
+                              style: TextStyle(
+                                  fontSize: 12, color: tileColor.textColor))),
                       SizedBox(
                           width: 40,
                           child: Text(
                               "${items[index].temperature} ${items[index].temperatureSign}",
                               textAlign: TextAlign.right,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: white)))
+                                  color: tileColor.textColor)))
                     ])));
               },
               itemCount: items.length,
@@ -348,4 +317,26 @@ class _WeatherFutureListHourlyState extends State<WeatherFutureListHourly> {
       ),
     );
   }
+}
+
+ColorTile backgroundFromWeather(String weather) {
+  weather = weather.toLowerCase();
+  for (MapEntry e in weatherColorMap.entries) {
+    developer.log(e.key);
+    developer.log(weather);
+    if (weather.contains(e.key)) {
+      ColorTile bg = e.value;
+      for (MapEntry a in weatherColorMapAlpha.entries) {
+        developer.log(a.key);
+        developer.log(weather);
+        if (weather.contains(a.key)) {
+          developer.log(a.value.toString());
+          return ColorTile(bg.bgColor.withOpacity(a.value), bg.textColor);
+        }
+      }
+      return bg;
+    }
+  }
+
+  return const ColorTile(backgroundStartColor, whiteColor);
 }

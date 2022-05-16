@@ -33,7 +33,12 @@ class MyApp extends StatelessWidget {
                   width: 1,
                   child: const MainScreen())));
     } else {
-      return const MaterialApp(title: "Weather App", home: PhoneMain());
+      return MaterialApp(
+          title: "Weather App",
+          theme: ThemeData(
+            fontFamily: 'Montserrat',
+          ),
+          home: const PhoneMain());
     }
   }
 }
@@ -58,8 +63,24 @@ class _PhoneMain extends State<PhoneMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Owen Weather App'),
-      ),
+          title: RichText(
+              text: const TextSpan(
+                  text: "",
+                  style: TextStyle(fontFamily: "Montserrat", fontSize: 24),
+                  children: <TextSpan>[
+            TextSpan(
+                text: "O",
+                style: TextStyle(
+                    fontFamily: "Montserrat",
+                    color: yellowColor,
+                    fontWeight: FontWeight.w900)),
+            TextSpan(
+                text: "pen Weather",
+                style: TextStyle(
+                    fontFamily: "Montserrat",
+                    color: whiteColor,
+                    fontWeight: FontWeight.w600)),
+          ]))),
       body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
