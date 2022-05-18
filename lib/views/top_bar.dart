@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
+// import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 const borderColor = Color.fromARGB(100, 0, 170, 237);
 const backgroundStartColor = Color.fromARGB(255, 0, 170, 237);
@@ -30,6 +30,7 @@ Map<String, double> weatherColorMapAlpha = {
   "most": 0.95,
 };
 
+/*
 final buttonColors = WindowButtonColors(
     iconNormal: const Color.fromARGB(255, 0, 0, 200),
     mouseOver: const Color.fromARGB(255, 0, 225, 255),
@@ -57,6 +58,7 @@ class WindowButtons extends StatelessWidget {
     );
   }
 }
+*/
 
 class ColorTile {
   final Color bgColor;

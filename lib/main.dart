@@ -1,13 +1,14 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
+//import 'package:bitsdojo_window/bitsdojo_window.dart';
 
 import 'views/top_bar.dart';
 import 'views/screen.dart';
 
 void main() {
   runApp(const MyApp());
+  /*
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(600, 450);
@@ -17,6 +18,7 @@ void main() {
     win.title = "Custom window with Flutter";
     win.show();
   });
+  */
 }
 
 class MyApp extends StatelessWidget {
@@ -25,13 +27,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-      return MaterialApp(
+      return const MaterialApp(
           debugShowCheckedModeBanner: false,
           home: Scaffold(
-              body: WindowBorder(
-                  color: backgroundStartColor,
-                  width: 1,
-                  child: const MainScreen())));
+            body: MainScreen(),
+          ));
     } else {
       return MaterialApp(
           title: "Weather App",
@@ -89,7 +89,7 @@ class _PhoneMain extends State<PhoneMain> {
                 colors: [backgroundStartColor, backgroundEndColor],
                 stops: [0.0, 1.0]),
           ),
-          child: Main(_selectedIndex)),
+          child: WeatherMain(_selectedIndex)),
       bottomNavigationBar: Container(
           decoration: const BoxDecoration(boxShadow: <BoxShadow>[
             BoxShadow(
@@ -120,13 +120,14 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
         child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [backgroundStartColor, backgroundEndColor],
-                  stops: [0.0, 1.0]),
-            ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [backgroundStartColor, backgroundEndColor],
+            stops: [0.0, 1.0]),
+      ),
+      /*
             child: Column(children: [
               WindowTitleBarBox(
                   child: Row(children: [
@@ -134,6 +135,7 @@ class MainScreen extends StatelessWidget {
                 const WindowButtons()
               ])),
               const Expanded(child: Main(1))
-            ])));
+            ])*/
+    ));
   }
 }
