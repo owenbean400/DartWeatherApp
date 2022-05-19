@@ -26,8 +26,8 @@ Map<String, ColorTile> weatherColorMap = {
 };
 
 Map<String, double> weatherColorMapAlpha = {
-  "part": 0.9,
-  "most": 0.95,
+  "part": 0.8,
+  "most": 0.9,
 };
 
 /*

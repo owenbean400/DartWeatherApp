@@ -4,7 +4,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-import 'dart:developer' as developer;
 
 // Global API Calling
 Future<WeatherParent> fetchWeatherFutureAll() async {

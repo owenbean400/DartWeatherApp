@@ -25,6 +25,7 @@ class _WeatherMain extends State<WeatherMain> {
     futureWeather = fetchWeatherFutureAll();
   }
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<WeatherParent>(
         future: futureWeather,
