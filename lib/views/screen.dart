@@ -57,7 +57,7 @@ class _WeatherMain extends State<WeatherMain> {
                           style: const TextStyle(color: white, fontSize: 24))
                     ],
                   )),
-              Expanded(flex: 1, child: _widgetOtions.elementAt(widget.index)),
+              Expanded(child: _widgetOtions.elementAt(widget.index)),
             ]);
           } else if (snapshot.hasError) {
             return const Center(

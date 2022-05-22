@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /*
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
       return const MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -33,13 +34,14 @@ class MyApp extends StatelessWidget {
             body: MainScreen(),
           ));
     } else {
-      return MaterialApp(
-          title: "Weather App",
-          theme: ThemeData(
-            fontFamily: 'Montserrat',
-          ),
-          home: const PhoneMain());
-    }
+      */
+    return MaterialApp(
+        title: "Weather App",
+        theme: ThemeData(
+          fontFamily: 'Montserrat',
+        ),
+        home: const PhoneMain());
+    //}
   }
 }
 
